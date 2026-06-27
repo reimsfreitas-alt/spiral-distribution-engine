@@ -1,0 +1,15 @@
+{
+    "name": "Lançamento Spiral Wealth",
+    "product": "Spiral Wealth",
+    "channels": [
+        "gmail",
+        "linkedin"
+    ],
+    "assets": [
+        1,
+        2,
+        3
+    ],
+    "status": "draft",
+    "createdAt": "2026-06-26T19:22:17.663Z"
+}
