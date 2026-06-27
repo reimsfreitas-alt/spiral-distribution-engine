@@ -1,6 +1,13 @@
 {
   "name": "distribution-engine",
   "version": "1.0.0",
+
+  "bin": {
+    "spiral": "./src/cli.js"
+  },
+
+  "description": "",
+  "main": "index.js",
   "description": "",
   "main": "index.js",
   "scripts": {
