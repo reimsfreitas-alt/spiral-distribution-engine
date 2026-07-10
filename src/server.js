@@ -10,10 +10,6 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-/* ============================================================
- * HOME
- * ============================================================ */
-
 app.get("/", (req, res) => {
 
     res.json({
@@ -24,10 +20,6 @@ app.get("/", (req, res) => {
 
 });
 
-/* ============================================================
- * HEALTH
- * ============================================================ */
-
 app.get("/health", (req, res) => {
 
     let version = "1.0.0";
@@ -37,75 +29,42 @@ app.get("/health", (req, res) => {
     } catch {}
 
     res.json({
-
         service: "distribution-engine",
-
         status: "online",
-
         version,
-
         build: process.env.SPIRAL_BUILD || "local",
-
         port: PORT,
-
         uptimeSeconds: Math.round(process.uptime()),
-
         dependencies: [
             process.env.LEDGER_URL || "http://localhost:4700"
         ],
-
         heartbeat: new Date().toISOString()
-
     });
 
 });
-
-/* ============================================================
- * PROVIDERS
- * ============================================================ */
 
 app.get("/providers", (req, res) => {
 
     res.json({
-
         total: registry.list().length,
-
         providers: registry.list()
-
     });
 
 });
 
 /* ============================================================
- * PUBLICAR CAMPANHA
- * ============================================================ */
+   PUBLICAR CAMPANHA
+   ============================================================ */
 
 app.post("/publish", async (req, res) => {
 
     try {
 
-        const campaign = req.body;
-
-        if (!campaign)
-            return res.status(400).json({
-                error: "Body vazio."
-            });
-
-        if (!campaign.targets || campaign.targets.length === 0)
-            return res.status(400).json({
-                error: "targets obrigatório."
-            });
-
-        const result = await publishCampaign(campaign);
+        const result = await publishCampaign(req.body);
 
         res.json({
-
             ok: true,
-
-            published: result.length,
-
             result
-
         });
 
     } catch (err) {
@@ -113,31 +72,21 @@ app.post("/publish", async (req, res) => {
         console.error(err);
 
         res.status(500).json({
-
             ok: false,
-
             error: err.message
-
         });
 
     }
 
 });
 
-/* ============================================================
- * START
- * ============================================================ */
-
 app.listen(PORT, () => {
 
     console.log("");
-
     console.log("================================");
     console.log(`SPIRAL SERVER ONLINE : ${PORT}`);
     console.log("================================");
-
-    console.log("LEDGER_URL :", process.env.LEDGER_URL || "http://localhost:4700");
-
+    console.log("LEDGER:", process.env.LEDGER_URL || "http://localhost:4700");
     console.log("POST /publish disponível");
 
 });
