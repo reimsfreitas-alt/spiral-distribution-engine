@@ -10,6 +10,10 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
+/* ============================================================
+ * HOME
+ * ============================================================ */
+
 app.get("/", (req, res) => {
 
     res.json({
@@ -19,6 +23,10 @@ app.get("/", (req, res) => {
     });
 
 });
+
+/* ============================================================
+ * HEALTH
+ * ============================================================ */
 
 app.get("/health", (req, res) => {
 
@@ -43,6 +51,10 @@ app.get("/health", (req, res) => {
 
 });
 
+/* ============================================================
+ * PROVIDERS
+ * ============================================================ */
+
 app.get("/providers", (req, res) => {
 
     res.json({
@@ -53,25 +65,38 @@ app.get("/providers", (req, res) => {
 });
 
 /* ============================================================
-   PUBLICAR CAMPANHA
-   ============================================================ */
+ * PUBLICAR CAMPANHA
+ * ============================================================ */
 
 app.post("/publish", async (req, res) => {
+
+    console.log("================================");
+    console.log("POST /publish recebido");
+    console.log("Body:");
+    console.log(JSON.stringify(req.body, null, 2));
+    console.log("================================");
 
     try {
 
         const result = await publishCampaign(req.body);
 
-        res.json({
+        console.log("Publish OK:");
+        console.log(JSON.stringify(result, null, 2));
+
+        return res.status(200).json({
             ok: true,
             result
         });
 
     } catch (err) {
 
-        console.error(err);
+        console.error("================================");
+        console.error("ERRO NO PUBLISH");
+        console.error("Mensagem:", err.message);
+        console.error(err.stack);
+        console.error("================================");
 
-        res.status(500).json({
+        return res.status(500).json({
             ok: false,
             error: err.message
         });
@@ -79,6 +104,10 @@ app.post("/publish", async (req, res) => {
     }
 
 });
+
+/* ============================================================
+ * START
+ * ============================================================ */
 
 app.listen(PORT, () => {
 
@@ -88,5 +117,6 @@ app.listen(PORT, () => {
     console.log("================================");
     console.log("LEDGER:", process.env.LEDGER_URL || "http://localhost:4700");
     console.log("POST /publish disponível");
+    console.log("");
 
 });
