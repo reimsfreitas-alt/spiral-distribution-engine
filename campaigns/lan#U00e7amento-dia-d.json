@@ -1,0 +1,20 @@
+{
+  "name": "Dia D - Invasão Total",
+  "targets": [
+    "linkedin",
+    "facebook",
+    "telegram",
+    "email",
+    "twitter",
+    "discord"
+],
+  "content": "A Spiral Engine está online. A transmissão global é total. O futuro pertence a nós.",
+  "assets": [
+    "@SpiralBlog.jpeg",
+    "Ebooks_Spiral.png",
+    "Lacos_de_Confianca.png",
+    "Permanencia_do_Registro.png",
+    "SpiralCodes.png",
+    "SpiralWealth.png"
+  ]
+}

@@ -1,0 +1,247 @@
+/**
+ * ==========================================================
+ * SPIRAL ENTERPRISE
+ * State Machine - Motor de Distribuição
+ * Governança Central de Transições de Estado
+ * ==========================================================
+ */
+
+const STATES = Object.freeze({
+    PENDING_AUTH: "PENDING_AUTH",
+    VALIDATED: "VALIDATED",
+    REJECTED: "REJECTED",
+    DISPATCHED: "DISPATCHED",
+    EXECUTED: "EXECUTED",
+    FAILED: "FAILED",
+    AUDITED: "AUDITED",
+    CLOSED: "CLOSED"
+});
+
+/**
+ * Verifica se uma transição de estado é permitida.
+ *
+ * @param {string} source_state
+ * @param {string} target_state
+ * @param {boolean} has_signature
+ * @returns {Object}
+ */
+function can_transition(
+    source_state,
+    target_state,
+    has_signature = false
+) {
+
+    switch (source_state) {
+
+        // ==================================================
+        // PENDING_AUTH
+        // ==================================================
+        case STATES.PENDING_AUTH:
+
+            if (target_state === STATES.VALIDATED) {
+
+                if (has_signature) {
+                    return {
+                        allowed: true,
+                        code: "OK",
+                        message: "Payload validado."
+                    };
+                }
+
+                return {
+                    allowed: false,
+                    code: "SIGNATURE_REQUIRED",
+                    message: "Assinatura obrigatória."
+                };
+
+            }
+
+            if (target_state === STATES.REJECTED) {
+
+                return {
+                    allowed: true,
+                    code: "OK",
+                    message: "Payload rejeitado."
+                };
+
+            }
+
+            break;
+
+        // ==================================================
+        // VALIDATED
+        // ==================================================
+        case STATES.VALIDATED:
+
+            if (target_state === STATES.DISPATCHED) {
+
+                return {
+                    allowed: true,
+                    code: "OK",
+                    message: "Payload enviado ao Driver."
+                };
+
+            }
+
+            break;
+
+        // ==================================================
+        // DISPATCHED
+        // ==================================================
+        case STATES.DISPATCHED:
+
+            if (target_state === STATES.EXECUTED) {
+
+                return {
+                    allowed: true,
+                    code: "OK",
+                    message: "Execução concluída."
+                };
+
+            }
+
+            if (target_state === STATES.FAILED) {
+
+                return {
+                    allowed: true,
+                    code: "OK",
+                    message: "Execução falhou."
+                };
+
+            }
+
+            break;
+
+        // ==================================================
+        // EXECUTED
+        // ==================================================
+        case STATES.EXECUTED:
+
+            if (target_state === STATES.AUDITED) {
+
+                return {
+                    allowed: true,
+                    code: "OK",
+                    message: "Execução auditada."
+                };
+
+            }
+
+            break;
+
+        // ==================================================
+        // FAILED
+        // ==================================================
+        case STATES.FAILED:
+
+            if (target_state === STATES.AUDITED) {
+
+                return {
+                    allowed: true,
+                    code: "OK",
+                    message: "Falha registrada na auditoria."
+                };
+
+            }
+
+            break;
+
+        // ==================================================
+        // AUDITED
+        // ==================================================
+        case STATES.AUDITED:
+
+            if (target_state === STATES.CLOSED) {
+
+                return {
+                    allowed: true,
+                    code: "OK",
+                    message: "Fluxo encerrado."
+                };
+
+            }
+
+            break;
+
+        default:
+            break;
+    }
+
+    // ======================================================
+    // BLOQUEIO PADRÃO
+    // ======================================================
+
+    return {
+        allowed: false,
+        code: "FLOW_VIOLATION",
+        message: "Violação de Fluxo de Estado."
+    };
+
+}
+
+/**
+ * Lista de transições permitidas
+ */
+function get_allowed_transitions(state) {
+
+    switch (state) {
+
+        case STATES.PENDING_AUTH:
+            return [
+                STATES.VALIDATED,
+                STATES.REJECTED
+            ];
+
+        case STATES.VALIDATED:
+            return [
+                STATES.DISPATCHED
+            ];
+
+        case STATES.DISPATCHED:
+            return [
+                STATES.EXECUTED,
+                STATES.FAILED
+            ];
+
+        case STATES.EXECUTED:
+            return [
+                STATES.AUDITED
+            ];
+
+        case STATES.FAILED:
+            return [
+                STATES.AUDITED
+            ];
+
+        case STATES.AUDITED:
+            return [
+                STATES.CLOSED
+            ];
+
+        default:
+            return [];
+    }
+
+}
+
+/**
+ * Verifica se o estado é terminal.
+ */
+function is_terminal_state(state) {
+
+    return (
+        state === STATES.REJECTED ||
+        state === STATES.CLOSED
+    );
+
+}
+
+/**
+ * Exportação
+ */
+module.exports = {
+    STATES,
+    can_transition,
+    get_allowed_transitions,
+    is_terminal_state
+};

@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+console.clear();
+
+console.log("");
+console.log("========================================");
+console.log("             SPIRAL OS");
+console.log("========================================");
+console.log("");
+
+try {
+
+    console.log("🩺 Executando Doctor...");
+    require("./src/doctor")();
+
+    console.log("");
+    console.log("🚀 Iniciando Spiral OS...");
+    console.log("");
+
+    require("./src/cli");
+
+} catch (error) {
+
+    console.error("");
+    console.error("❌ Falha ao iniciar o Spiral OS");
+    console.error(error);
+
+    process.exit(1);
+
+}

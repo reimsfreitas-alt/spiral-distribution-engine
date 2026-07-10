@@ -1,0 +1,9 @@
+{
+  "telegramToken": "",
+  "telegramChatId": "",
+  "gmail": {},
+  "linkedin": {}
+  }
+{
+  "targets": ["test"]
+}

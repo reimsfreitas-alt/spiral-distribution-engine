@@ -1,0 +1,16 @@
+const cron = require('node-cron');
+const { exec } = require('child_process');
+
+console.log("🤖 Motor Espiral em modo S.E.N.T.I.N.E.L.A. ativado...");
+
+// Agenda o disparo para rodar todo dia às 08:00 AM
+cron.schedule('0 8 * * *', () => {
+    console.log("⏰ 08:00 - Iniciando disparo automático...");
+    exec('node src/cli.js', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Erro no disparo automático: ${error.message}`);
+            return;
+        }
+        console.log("✅ Disparo automático concluído com sucesso!");
+    });
+});

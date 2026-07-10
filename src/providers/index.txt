@@ -1,0 +1,7 @@
+const linkedin = require("../channels/linkedin");
+
+module.exports = {
+
+    linkedin
+
+};

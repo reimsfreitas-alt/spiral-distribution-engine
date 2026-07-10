@@ -1,0 +1,31 @@
+# Dependências
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Arquivos gerados
+publish/
+
+# Credenciais
+config/credentials.json
+config/token.json
+
+# Variáveis de ambiente
+.env
+.env.*
+
+# Sistema operacional
+Thumbs.db
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+# Secrets
+config/credentials.json
+config/tokens/
+
+# Environment
+.env

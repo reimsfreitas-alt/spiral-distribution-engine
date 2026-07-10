@@ -1,0 +1,5 @@
+{
+    "name": "Dia D - Transmissão Global",
+    "targets": ["linkedin"],
+    "content": "A Spiral Engine está online. Transmissão global iniciada. O futuro é agora."
+}

@@ -1,0 +1,56 @@
+# Spiral Distribution Engine Roadmap
+
+## ✅ Fase 1 — Fundação (CONCLUÍDA)
+
+- GitHub
+- Git
+- CLI
+- Publisher
+- Dispatcher
+- Plugin Manager
+- LinkedIn OAuth
+- Doctor
+- Status
+- About
+- Version
+- Release v1.0.0
+
+---
+
+## 🔄 Fase 2 — Operação
+
+- [ ] Deploy Ubuntu
+- [ ] PM2
+- [ ] HTTPS
+- [ ] Logs centralizados
+- [ ] Configuração por ambiente
+
+---
+
+## 🚀 Fase 3 — Canais
+
+- [ ] LinkedIn completo
+- [ ] Gmail
+- [ ] WhatsApp
+- [ ] Instagram
+- [ ] Telegram
+
+---
+
+## 🧠 Fase 4 — Inteligência
+
+- [ ] Scheduler
+- [ ] Filas
+- [ ] Retry automático
+- [ ] Dashboard
+- [ ] Analytics
+
+---
+
+## 🌎 Fase 5 — Spiral Hub
+
+- [ ] API REST
+- [ ] Webhooks
+- [ ] Multiusuário
+- [ ] Deploy contínuo
+- [ ] Painel Web
