@@ -8,7 +8,7 @@
 
 const path = require("path");
 const fs = require("fs");
-const { SpiralLedgerClient } = require("../../../spiral-ledger/sdk/client");
+const { SpiralLedgerClient } = require("./ledgerClient");
 
 const LEDGER_URL =
     process.env.LEDGER_URL ||
