@@ -1,63 +1,203 @@
 "use strict";
+
 /**
- * Publisher — dispara a campanha nos providers e REGISTRA cada disparo no
- * spiral-ledger (fonte única da verdade). Sem ledger em memória.
+ * Spiral Distribution Engine
+ * Publisher
+ * Publica campanhas e registra TODA a corrente no Spiral Ledger.
  */
+
 const path = require("path");
 const fs = require("fs");
 const { SpiralLedgerClient } = require("../../../spiral-ledger/sdk/client");
 
-// Fonte única da verdade: spiral-ledger via HTTP. Nada de gravação paralela.
-const LEDGER_URL = process.env.LEDGER_URL || "http://localhost:4700";
-const LEDGER_TOKEN = process.env.LEDGER_TOKEN || null;
-const ledger = new SpiralLedgerClient(LEDGER_URL, LEDGER_TOKEN);
+const LEDGER_URL =
+    process.env.LEDGER_URL ||
+    "http://localhost:4700";
 
-function slug(s) {
-  return String(s || "campanha").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const LEDGER_TOKEN =
+    process.env.LEDGER_TOKEN ||
+    null;
+
+const ledger = new SpiralLedgerClient(
+    LEDGER_URL,
+    LEDGER_TOKEN
+);
+
+function slug(text) {
+    return String(text || "campaign")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
 }
 
 async function publishCampaign(campaign) {
-  if (!campaign.targets || campaign.targets.length === 0) {
-    throw new Error("Nenhum target (canal) definido na campanha.");
-  }
 
-  const ASSETS_DIR = process.env.ASSETS_DIR || path.join(__dirname, "..", "..", "assets", "marketing");
-  const attachments = (campaign.assets || []).map((filename) => {
-    const fullPath = path.join(ASSETS_DIR, filename);
-    if (!fs.existsSync(fullPath)) { console.warn(`⚠️ Asset não encontrado: ${filename}`); return null; }
-    return fullPath;
-  }).filter((p) => p !== null);
+    if (!campaign)
+        throw new Error("Campaign inválida.");
 
-  const base = slug(campaign.name);
-  const results = [];
+    if (!campaign.targets || campaign.targets.length === 0)
+        throw new Error("Nenhum target informado.");
 
-  for (const target of campaign.targets) {
-    const decision_id = `${base}-${target}`;
-    const idempotency_key = `${decision_id}-${Date.now()}`;
-    // O Vision pareia DISPATCHED -> EXECUTED/FAILED por idempotency_key (latência de execução).
-    const meta = { decision_id, idempotency_key, target, actor: "distribution-engine", why: campaign.name || null };
+    const assetsDir =
+        process.env.ASSETS_DIR ||
+        path.join(
+            __dirname,
+            "..",
+            "..",
+            "assets",
+            "marketing"
+        );
 
-    // Abertura da decisão ANTES do disparo (par que o Vision precisa para medir).
-    await ledger.record({ ...meta, state: "DISPATCHED" });
+    const attachments =
+        (campaign.assets || [])
+            .map(file => {
 
-    try {
-      const provider = require(`../providers/${target}`);
-      await provider.send({ target, campaign, payload: { text: campaign.content, attachments } });
+                const full =
+                    path.join(assetsDir, file);
 
-      // >>> Ponto imediatamente APÓS provider.send bem-sucedido: registro no spiral-ledger.
-      await ledger.record({ ...meta, state: "EXECUTED" });
-      console.log(`🧾 [Ledger] ${decision_id} EXECUTED`);
-      results.push({ target, ok: true });
-    } catch (err) {
-      console.error(`❌ Erro no provedor ${target}:`, err.message);
-      // Fecha a decisão como FALHA — nunca silenciosa; o Vision conta failures.
-      try { await ledger.record({ ...meta, state: "FAILED", why: String(err.message || err) }); }
-      catch (e2) { console.error("❌ Ledger indisponível:", e2.message); }
-      results.push({ target, ok: false, error: String(err.message || err) });
+                if (!fs.existsSync(full)) {
+                    console.warn(
+                        `[publisher] Asset inexistente: ${file}`
+                    );
+                    return null;
+                }
+
+                return full;
+
+            })
+            .filter(Boolean);
+
+    const base = slug(campaign.name);
+
+    const results = [];
+
+    for (const target of campaign.targets) {
+
+        const decision_id =
+            `${base}-${target}`;
+
+        const idempotency_key =
+            `${decision_id}-${Date.now()}`;
+
+        const meta = {
+
+            decision_id,
+            idempotency_key,
+
+            target,
+
+            actor: "distribution-engine",
+
+            why: campaign.name || null
+
+        };
+
+        //-------------------------------------------------
+        // DISPATCHED
+        //-------------------------------------------------
+
+        await ledger.record({
+
+            ...meta,
+
+            state: "DISPATCHED"
+
+        });
+
+        try {
+
+            const provider =
+                require(`../providers/${target}`);
+
+            await provider.send({
+
+                target,
+
+                campaign,
+
+                payload: {
+
+                    text: campaign.content,
+
+                    attachments
+
+                }
+
+            });
+
+            //---------------------------------------------
+            // EXECUTED
+            //---------------------------------------------
+
+            await ledger.record({
+
+                ...meta,
+
+                state: "EXECUTED"
+
+            });
+
+            console.log(
+                `[Ledger] ${decision_id} EXECUTED`
+            );
+
+            results.push({
+
+                target,
+
+                ok: true
+
+            });
+
+        }
+        catch (err) {
+
+            //---------------------------------------------
+            // FAILED
+            //---------------------------------------------
+
+            try {
+
+                await ledger.record({
+
+                    ...meta,
+
+                    state: "FAILED",
+
+                    why: String(err.message || err)
+
+                });
+
+            }
+            catch (ledgerError) {
+
+                console.error(
+                    "[Ledger]",
+                    ledgerError.message
+                );
+
+            }
+
+            results.push({
+
+                target,
+
+                ok: false,
+
+                error: String(err.message || err)
+
+            });
+
+        }
+
     }
-  }
 
-  return results;
+    return results;
+
 }
 
-module.exports = { publishCampaign };
+module.exports = {
+
+    publishCampaign
+
+};
