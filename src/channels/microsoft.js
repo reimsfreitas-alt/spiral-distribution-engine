@@ -10,6 +10,14 @@
 
 const axios = require("axios");
 
+const MICROSOFT_CLIENT_ID = process.env.MICROSOFT_CLIENT_ID || "369ddd9a-7f5e-471a-8984-649b0ea03cd2";
+const MICROSOFT_AUTHORITY = "https://login.microsoftonline.com/common";
+const MICROSOFT_SCOPE = "offline_access Mail.Send";
+
+function getOAuthConfig() {
+  return { clientId: MICROSOFT_CLIENT_ID, authority: MICROSOFT_AUTHORITY, scope: MICROSOFT_SCOPE };
+}
+
 const GRAPH_SENDMAIL_URL = "https://graph.microsoft.com/v1.0/me/sendMail";
 
 function required(name) {
@@ -68,4 +76,4 @@ async function send({ campaign, payload }) {
   };
 }
 
-module.exports = { send };
+module.exports = { send, getOAuthConfig };
