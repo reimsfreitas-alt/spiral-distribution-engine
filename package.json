@@ -2,14 +2,12 @@
   "name": "distribution-engine",
   "version": "1.0.0",
   "description": "Spiral Distribution Engine — governed campaign execution and distribution runtime",
-  "bin": {
-    "spiral": "./src/cli.js"
-  },
+  "bin": {"spiral": "./src/cli.js"},
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "build": "node --check src/server.js && node --check api/index.js && node --check src/core/publisher.js && node --check scripts/smoke.js",
-    "test": "node scripts/smoke.js"
+    "build": "node --check src/server.js && node --check api/index.js && node --check src/core/publisher.js && node --check src/core/executionContract.js && node --check scripts/smoke.js && node --check scripts/contract-test.js",
+    "test": "node scripts/contract-test.js && node scripts/smoke.js"
   },
   "keywords": ["spiral", "distribution", "campaign", "execution"],
   "author": "Spiral Codes",
