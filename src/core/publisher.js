@@ -1,203 +1,103 @@
 "use strict";
 
 /**
- * Spiral Distribution Engine
- * Publisher
- * Publica campanhas e registra TODA a corrente no Spiral Ledger.
+ * Spiral Distribution Engine — execution/data plane publisher.
+ * Policy and authorization belong upstream. This module executes a supplied
+ * campaign and records execution evidence; it does not declare verification.
  */
-
 const path = require("path");
 const fs = require("fs");
 const { SpiralLedgerClient } = require("./ledgerClient");
+const { buildExecutionContract, assertProviderContract } = require("./executionContract");
 
-const LEDGER_URL =
-    process.env.LEDGER_URL ||
-    "http://localhost:4700";
-
-const LEDGER_TOKEN =
-    process.env.LEDGER_TOKEN ||
-    null;
-
-const ledger = new SpiralLedgerClient(
-    LEDGER_URL,
-    LEDGER_TOKEN
-);
+const LEDGER_URL = process.env.LEDGER_URL || "http://localhost:4700";
+const LEDGER_TOKEN = process.env.LEDGER_TOKEN || null;
+const ledger = new SpiralLedgerClient(LEDGER_URL, LEDGER_TOKEN);
 
 function slug(text) {
-    return String(text || "campaign")
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
+    return String(text || "campaign").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
 async function publishCampaign(campaign) {
+    if (!campaign) throw new Error("Campaign inválida.");
+    if (!Array.isArray(campaign.targets) || campaign.targets.length === 0) throw new Error("Nenhum target informado.");
 
-    if (!campaign)
-        throw new Error("Campaign inválida.");
-
-    if (!campaign.targets || campaign.targets.length === 0)
-        throw new Error("Nenhum target informado.");
-
-    const assetsDir =
-        process.env.ASSETS_DIR ||
-        path.join(
-            __dirname,
-            "..",
-            "..",
-            "assets",
-            "marketing"
-        );
-
-    const attachments =
-        (campaign.assets || [])
-            .map(file => {
-
-                const full =
-                    path.join(assetsDir, file);
-
-                if (!fs.existsSync(full)) {
-                    console.warn(
-                        `[publisher] Asset inexistente: ${file}`
-                    );
-                    return null;
-                }
-
-                return full;
-
-            })
-            .filter(Boolean);
+    const assetsDir = process.env.ASSETS_DIR || path.join(__dirname, "..", "..", "assets", "marketing");
+    const attachments = (campaign.assets || []).map(file => {
+        const full = path.join(assetsDir, file);
+        if (!fs.existsSync(full)) {
+            console.warn(`[publisher] Asset inexistente: ${file}`);
+            return null;
+        }
+        return full;
+    }).filter(Boolean);
 
     const base = slug(campaign.name);
-
     const results = [];
+    const tenant_id = String(campaign.tenant_id || "default");
 
     for (const target of campaign.targets) {
+        const provider = require(`../providers/${target}`);
+        assertProviderContract(provider, target);
 
-        const decision_id =
-            `${base}-${target}`;
-
-        const idempotency_key =
-            `${decision_id}-${Date.now()}`;
-
-        const meta = {
-
-            decision_id,
-            idempotency_key,
-
+        const contract = buildExecutionContract({
+            tenant_id,
+            campaign,
             target,
-
-            actor: "distribution-engine",
-
-            why: campaign.name || null
-
-        };
-
-        //-------------------------------------------------
-        // DISPATCHED
-        //-------------------------------------------------
-
-        await ledger.record({
-
-            ...meta,
-
-            state: "DISPATCHED"
-
+            payload_ref: campaign.payload_ref || `${base}:${target}`,
+            authorization: campaign.authorization || null
         });
 
+        const meta = {
+            ...contract,
+            decision_id: `${base}-${target}`,
+            target,
+            why: campaign.name || null
+        };
+
+        await ledger.record({ ...meta, state: "DISPATCHED" });
+
         try {
-
-            const provider =
-                require(`../providers/${target}`);
-
-            await provider.send({
-
+            const providerResult = await provider.send({
                 target,
-
                 campaign,
-
-                payload: {
-
-                    text: campaign.content,
-
-                    attachments
-
-                }
-
+                execution: contract,
+                payload: { text: campaign.content, attachments }
             });
-
-            //---------------------------------------------
-            // EXECUTED
-            //---------------------------------------------
 
             await ledger.record({
-
                 ...meta,
-
-                state: "EXECUTED"
-
+                state: "EXECUTED",
+                provider_result_ref: providerResult && providerResult.id ? String(providerResult.id) : null
             });
 
-            console.log(
-                `[Ledger] ${decision_id} EXECUTED`
-            );
-
-            results.push({
-
-                target,
-
-                ok: true
-
-            });
-
-        }
-        catch (err) {
-
-            //---------------------------------------------
-            // FAILED
-            //---------------------------------------------
-
+            results.push({ target, ok: true, execution_id: contract.execution_id, idempotency_key: contract.idempotency_key });
+        } catch (err) {
+            // A transport/adapter error does not prove that the external effect did not happen.
+            // Preserve that uncertainty for reconciliation instead of mislabeling it FAILED.
+            const state = err && err.confirmed_not_sent === true ? "FAILED" : "UNKNOWN";
             try {
-
                 await ledger.record({
-
                     ...meta,
-
-                    state: "FAILED",
-
-                    why: String(err.message || err)
-
+                    state,
+                    why: String(err && (err.message || err) || "unknown execution error")
                 });
-
-            }
-            catch (ledgerError) {
-
-                console.error(
-                    "[Ledger]",
-                    ledgerError.message
-                );
-
+            } catch (ledgerError) {
+                console.error("[Ledger]", ledgerError.message);
             }
 
             results.push({
-
                 target,
-
                 ok: false,
-
-                error: String(err.message || err)
-
+                state,
+                execution_id: contract.execution_id,
+                idempotency_key: contract.idempotency_key,
+                error: String(err && (err.message || err) || "unknown execution error")
             });
-
         }
-
     }
 
     return results;
-
 }
 
-module.exports = {
-
-    publishCampaign
-
-};
+module.exports = { publishCampaign };
