@@ -6,7 +6,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "build": "node --check src/server.js && node --check api/index.js && node --check src/core/publisher.js && node --check src/core/executionContract.js && node --check scripts/smoke.js && node --check scripts/contract-test.js",
+    "build": "node --check src/server.js && node --check api/index.js && node --check src/core/publisher.js && node --check src/core/executionContract.js && node --check src/core/distributionJob.js && node --check scripts/smoke.js && node --check scripts/contract-test.js",
     "test": "node scripts/contract-test.js && node scripts/smoke.js"
   },
   "keywords": ["spiral", "distribution", "campaign", "execution"],
