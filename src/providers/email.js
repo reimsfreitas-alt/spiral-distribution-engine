@@ -1,19 +1,18 @@
 /**
- * Provider: Email
- * Localização: src/providers/email.js
+ * Provider: Email (SIMULADO)
+ *
+ * Não faz nenhuma chamada de rede. O fluxo real de Gmail (OAuth via
+ * @google-cloud/local-auth) permanece em legacy/channels/gmail.js e não está conectado a
+ * este pipeline. O registry marca este provider explicitamente como real:false.
  */
 
-async function send({ target, campaign, payload }) {
+async function send({ payload }) {
     console.log(`\n📧 [Email] Preparando servidor SMTP...`);
-    
-    // Aqui viria a lógica: transporter.sendMail(...)
-    
     console.log(`📧 [Email] Disparado para a lista de contatos: "${payload.text}"`);
-    
-    return { 
-        status: "success", 
-        network: "email", 
-        id: "email_sent_001" 
+    return {
+        status: "success",
+        network: "email",
+        id: "email_sent_001"
     };
 }
 
