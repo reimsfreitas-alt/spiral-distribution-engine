@@ -1,20 +1,26 @@
+"use strict";
 /**
- * Provider: Telegram
- * Localização: src/providers/telegram.js
+ * Provider: Telegram (real)
+ *
+ * Publishes through the Telegram Bot API. Missing credentials fail honestly.
  */
+const axios = require("axios");
 
-async function send({ target, campaign, payload }) {
-    console.log(`\n🤖 [Telegram] Conectando ao Bot API...`);
-    
-    // Aqui viria a lógica: bot.sendMessage(chatId, payload.text)
-    
-    console.log(`🤖 [Telegram] Mensagem enviada para o grupo: "${payload.text}"`);
-    
-    return { 
-        status: "success", 
-        network: "telegram", 
-        id: "tele_msg_999" 
-    };
+async function send({ payload }) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token) throw new Error("TELEGRAM_BOT_TOKEN não configurado.");
+  if (!chatId) throw new Error("TELEGRAM_CHAT_ID não configurado.");
+  if (!payload || !payload.text) throw new Error("Campanha sem conteúdo.");
+
+  const response = await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
+    chat_id: chatId,
+    text: payload.text
+  });
+
+  const result = response.data && response.data.result;
+  const id = result && result.message_id != null ? String(result.message_id) : null;
+  return { status: "success", network: "telegram", id };
 }
 
 module.exports = { send };
