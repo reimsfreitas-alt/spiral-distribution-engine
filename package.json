@@ -6,8 +6,8 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "build": "node --check src/server.js && node --check api/index.js && node --check src/core/publisher.js && node --check src/core/executionContract.js && node --check src/core/distributionJob.js && node --check scripts/smoke.js && node --check scripts/contract-test.js",
-    "test": "node scripts/contract-test.js && node scripts/smoke.js"
+    "build": "node --check src/server.js && node --check api/index.js && node --check src/core/publisher.js && node --check src/core/executionContract.js && node --check src/core/distributionJob.js && node --check src/core/providerRegistry.js && node --check src/core/jobStore.js && node --check src/cli.js && node --check public/voice-pipeline.js && node --check scripts/smoke.js && node --check scripts/contract-test.js && node --check scripts/pipeline-test.js && node --check scripts/voice-pipeline-test.js",
+    "test": "node scripts/contract-test.js && node scripts/pipeline-test.js && node scripts/voice-pipeline-test.js && node scripts/smoke.js"
   },
   "keywords": ["spiral", "distribution", "campaign", "execution"],
   "author": "Spiral Codes",
@@ -17,7 +17,7 @@
     "@google-cloud/local-auth": "^3.0.1",
     "axios": "^1.18.1",
     "chalk": "^5.6.2",
-    "commander": "^15.0.0",
+    "commander": "^15.0.2",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "form-data": "^4.0.6",
@@ -25,7 +25,7 @@
     "googleapis": "^173.0.0",
     "inquirer": "^14.0.2",
     "node-cron": "^4.5.0",
-    "nodemailer": "^9.0.1",
+    "nodemailer": "^7.0.11",
     "open": "^11.0.0",
     "ora": "^9.4.1"
   }
