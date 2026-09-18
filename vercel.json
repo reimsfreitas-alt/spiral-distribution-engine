@@ -5,7 +5,7 @@
   "installCommand": "npm install",
   "outputDirectory": "public",
   "rewrites": [
-    { "source": "/cowboy", "destination": "/cowboy/index.html" },
+    { "source": "/page", "destination": "/page/index.html" },
     { "source": "/health", "destination": "/api/health" },
     { "source": "/providers", "destination": "/api/providers" },
     { "source": "/publish", "destination": "/api/publish" },
