@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Spiral Distribution Engine — infraestrutura governada para transformar intenção autorizada em distribuição coordenada.">
+<title>Spiral Distribution Engine — Vitrine</title>
+<style>
+:root{--bg:#070809;--ink:#f5f0e7;--muted:#a8a299;--gold:#d5ad62;--gold2:#efd08f;--line:rgba(255,255,255,.1);--panel:#101216;--cyan:#71d8ca;--max:1180px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(850px 600px at 50% 0,rgba(213,173,98,.13),transparent 68%),var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(var(--max),calc(100% - 42px));margin:auto}a{color:inherit;text-decoration:none}
+nav{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{font-size:12px;font-weight:800;letter-spacing:.2em}.brand span{color:var(--gold)}nav a{font-size:11px;color:var(--muted);letter-spacing:.08em}
+.hero{min-height:88vh;display:grid;place-items:center;text-align:center;padding:80px 0}.orb{width:min(58vw,390px);aspect-ratio:1;border-radius:50%;margin:0 auto 48px;background:radial-gradient(circle at 38% 30%,#fff 0,rgba(213,173,98,.8) 7%,rgba(213,173,98,.16) 29%,transparent 69%);box-shadow:0 0 120px rgba(213,173,98,.15);position:relative}.orb:before,.orb:after{content:"";position:absolute;border:1px solid rgba(213,173,98,.28);border-radius:50%;inset:9%;animation:spin 20s linear infinite}.orb:after{inset:20%;animation-direction:reverse;animation-duration:14s;border-color:rgba(255,255,255,.12)}@keyframes spin{to{transform:rotate(360deg)}}
+.eyebrow{font:700 10px ui-monospace,monospace;letter-spacing:.23em;color:var(--gold);text-transform:uppercase}h1{font-size:clamp(48px,8vw,94px);line-height:.91;letter-spacing:-.06em;max-width:930px;margin:18px auto 24px}h1 em{font-style:normal;color:var(--gold2)}.lead{font-size:20px;color:var(--muted);max-width:730px;margin:auto}.cta{display:inline-flex;margin-top:30px;padding:13px 20px;border:1px solid var(--gold);border-radius:12px;font-weight:750;font-size:13px}.cta.primary{background:var(--gold);color:#151108}
+section{border-top:1px solid var(--line);padding:95px 0}h2{font-size:clamp(36px,5vw,61px);line-height:1;letter-spacing:-.05em;margin:8px 0 18px}.sub{color:var(--muted);font-size:18px;max-width:780px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:38px}.card{background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));border:1px solid var(--line);border-radius:18px;padding:28px;min-height:190px}.num{font:700 10px ui-monospace,monospace;color:var(--gold)}h3{font-size:19px;margin:14px 0 8px}.card p{margin:0;color:var(--muted);font-size:14px}
+.flow{display:grid;grid-template-columns:repeat(8,1fr);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:38px}.step{padding:20px 14px;min-height:120px;border-right:1px solid var(--line)}.step:last-child{border:0}.step small{color:#666158;font:9px ui-monospace,monospace}.step b{display:block;color:var(--gold);font:800 10px ui-monospace,monospace;margin:22px 0 7px}.step span{color:var(--muted);font-size:11px}
+.principle{text-align:center;max-width:850px;margin:auto}.principle p{font-family:Georgia,serif;font-size:clamp(27px,4vw,44px);line-height:1.1;letter-spacing:-.03em}.principle .gold{color:var(--gold)}.status{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:25px}.status span{border:1px solid var(--line);border-radius:999px;padding:9px 13px;color:var(--muted);font:10px ui-monospace,monospace}.status span:first-child{color:var(--cyan);border-color:rgba(113,216,202,.25)}
+footer{border-top:1px solid var(--line);padding:35px 0 60px;color:var(--muted);font-size:11px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.flow{grid-template-columns:repeat(2,1fr)}.step:nth-child(2n){border-right:0}.step{border-bottom:1px solid var(--line)}}@media(max-width:600px){.wrap{width:min(var(--max),calc(100% - 30px))}nav{height:68px}.hero{min-height:auto;padding:70px 0 85px}.orb{width:230px;margin-bottom:38px}section{padding:70px 0}.flow{grid-template-columns:1fr}.step{border-right:0}.step:last-child{border-bottom:0}.lead{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><div class="brand">SPIRAL <span>●</span> DISTRIBUTION</div><a href="/">ABRIR COCKPIT →</a></nav>
+<main>
+<section class="hero">
+<div><div class="orb"></div><div class="eyebrow">SPIRAL DISTRIBUTION ENGINE</div>
+<h1>Da intenção autorizada à <em>distribuição coordenada.</em></h1>
+<p class="lead">A camada de execução da Spiral Codes para campanhas, canais e sinais operacionais — com governança, observabilidade e rastreabilidade.</p>
+<a class="cta primary" href="#modelo">CONHECER O MOTOR ↓</a></div>
+</section>
+<section>
+<div class="eyebrow">A CAMADA</div><h2>Distribuição não é um botão.</h2>
+<p class="sub">É um sistema de execução controlada. O Engine recebe ações autorizadas, coordena canais e provedores, mantém estados explícitos e devolve observação ao ciclo de reconciliação.</p>
+<div class="grid">
+<div class="card"><div class="num">01 / DISPATCH</div><h3>Execução coordenada</h3><p>Uma camada comum para encaminhar ações aos canais sem reconstruir o fluxo a cada integração.</p></div>
+<div class="card"><div class="num">02 / GOVERN</div><h3>Estado real, simulado ou bloqueado</h3><p>O sistema não transforma capacidade planejada em execução fictícia. Cada estado permanece explícito.</p></div>
+<div class="card"><div class="num">03 / OBSERVE</div><h3>Operação rastreável</h3><p>Jobs, providers e estados podem alimentar observação, reconciliação e evidência.</p></div>
+</div>
+</section>
+<section id="modelo">
+<div class="eyebrow">MODELO DE EXECUÇÃO</div><h2>Um fluxo. Vários canais. Estados separados.</h2>
+<p class="sub">O Distribution Engine fica entre autorização e observação, preservando a separação entre executar uma ação e provar seu resultado.</p>
+<div class="flow">
+<div class="step"><small>01</small><b>INTENT</b><span>O que se pretende fazer.</span></div>
+<div class="step"><small>02</small><b>AUTH</b><span>O que foi autorizado.</span></div>
+<div class="step"><small>03</small><b>CAMPAIGN</b><span>Contexto da ação.</span></div>
+<div class="step"><small>04</small><b>CHANNEL</b><span>Onde executar.</span></div>
+<div class="step"><small>05</small><b>EXECUTE</b><span>Ação encaminhada.</span></div>
+<div class="step"><small>06</small><b>OBSERVE</b><span>Estado observado.</span></div>
+<div class="step"><small>07</small><b>EVIDENCE</b><span>O que pode ser provado.</span></div>
+<div class="step"><small>08</small><b>LEARN</b><span>O que muda depois.</span></div>
+</div>
+</section>
+<section>
+<div class="principle"><div class="eyebrow">PRINCÍPIO DE VERDADE</div><p>Uma mensagem preparada não é uma mensagem enviada.<br>Um envio não é prova de entrega.<br><span class="gold">Entrega não é prova de resultado.</span></p><div class="status"><span>EXECUTION ≠ OBSERVATION</span><span>OBSERVATION ≠ VERIFICATION</span><span>STATE IS EXPLICIT</span></div></div>
+</section>
+<section>
+<div class="eyebrow">DENTRO DO ECOSSISTEMA</div><h2>O Engine não trabalha sozinho.</h2>
+<p class="sub">Spiral Intent governa a intenção e autorização. Distribution Engine executa. Spiral Truth verifica. Spiral OS coordena as camadas. Spiral Lead encontra a oportunidade. Spiral Talk organiza a conversa.</p>
+<a class="cta" href="https://spiralwealth.com.br/">VOLTAR À SPIRAL WEALTH →</a>
+</section>
+</main>
+<footer>SPIRAL CODES · DISTRIBUTION ENGINE · GOVERNED EXECUTION INFRASTRUCTURE</footer>
+</div>
+</body>
+</html>
